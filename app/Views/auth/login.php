@@ -31,7 +31,7 @@
         <form action="/auth/doLogin" method="post">
             <div class="field-group">
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="admin@sysinfo.mg" required>
+                <input id="email" name="email" type="email" placeholder="admin@univ.edu" required>
             </div>
 
             <div class="field-group">
@@ -53,9 +53,9 @@
         <div class="login-footer">
             Comptes de test :
             <br>
-            <strong>Admin :</strong> admin@sysinfo.mg / admin123
+            <strong>Admin :</strong> admin@univ.edu / admin123
             <br>
-            <strong>User :</strong> user@sysinfo.mg / user123
+            <strong>Etudiant :</strong> etudiant1@etudiant.edu / password123
         </div>
     </div>
 </body>

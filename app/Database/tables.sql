@@ -71,10 +71,10 @@ CREATE TABLE matieres (
 CREATE TABLE notes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_etudiant INT NOT NULL,
-    id_matiers INT NOT NULL,
+    id_matiere INT NOT NULL,
     total_credit INT NOT NULL DEFAULT 0,
     FOREIGN KEY (id_etudiant) REFERENCES etudiants(id),
-    FOREIGN KEY (id_matiers) REFERENCES matieres(id)
+    FOREIGN KEY (id_matiere) REFERENCES matieres(id)
 );
 
 CREATE TABLE resultat (

@@ -2,40 +2,41 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Database\BaseBuilder;
+use App\Models\MatiereModel;
+use App\Models\PeriodeModel;
+use App\Models\OptionModel;
+use App\Models\EtudiantModel;
+use App\Models\NoteModel;
 
 class EtudiantController extends BaseController
 {
+   protected $matiereModel;
+   protected $periodeModel;
+   protected $optionModel;
+   protected $etudiantModel;
+   protected $noteModel;
+
+   public function __construct()
+   {
+      $this->matiereModel = new MatiereModel();
+      $this->periodeModel = new PeriodeModel();
+      $this->optionModel = new OptionModel();
+      $this->etudiantModel = new EtudiantModel();
+      $this->noteModel = new NoteModel();
+   }
+
    public function index(): string
    {
-    $list=["etudiant1","etudiant2"];
-    return view('etudiants',['lists'=>$list]);
+      $list = ["etudiant1", "etudiant2"];
+      return view('etudiants', ['lists' => $list]);
    }
 
    public function form(): string
    {
-      $db = db_connect();
-      
-      // Récupérer les matières
-      $matieres = $db->table('matieres')
-         ->select('id, nom, code, credit')
-         ->orderBy('nom')
-         ->get()
-         ->getResultArray();
-      
-      // Récupérer les semestres (pirode)
-      $semestres = $db->table('pirode')
-         ->select('id, nom')
-         ->orderBy('id')
-         ->get()
-         ->getResultArray();
-      
-      // Récupérer les options
-      $options = $db->table('option')
-         ->select('id, nom')
-         ->orderBy('nom')
-         ->get()
-         ->getResultArray();
+      // Récupérer les données via les Models
+      $matieres = $this->matiereModel->getAllWithDetails();
+      $semestres = $this->periodeModel->getAll();
+      $options = $this->optionModel->getAll();
 
       return view('note_form', [
          'matieres' => $matieres,
@@ -46,16 +47,8 @@ class EtudiantController extends BaseController
 
    public function notes(): string
    {
-      $db = db_connect();
-      
-      // Récupérer toutes les notes avec les détails
-      $notes = $db->table('notes')
-         ->select('e.nom, e.prenoms, e.etu, m.nom as matiere, p.nom as periode, n.note, m.credit')
-         ->join('etudiants e', 'n.id_etudiant = e.id')
-         ->join('matieres m', 'n.id_matiers = m.id')
-         ->join('pirode p', 'm.id_periode = p.id')
-         ->get()
-         ->getResultArray();
+      // Récupérer les notes via le Model
+      $notes = $this->noteModel->getAllWithDetails();
 
       return view('notes_list', ['notes' => $notes]);
    }
@@ -71,7 +64,6 @@ class EtudiantController extends BaseController
          return redirect()->to('/list')->with('error', 'Vous n\'avez pas la permission d\'ajouter une note');
       }
 
-      $db = db_connect();
       $validation = \Config\Services::validation();
 
       // Valider les données
@@ -87,25 +79,38 @@ class EtudiantController extends BaseController
          return redirect()->back()->withInput()->with('errors', $validation->getErrors());
       }
 
-      // Récupérer l'ID de l'étudiant basé sur l'ETU
-      $etudiant = $db->table('etudiants')
-         ->select('id')
-         ->where('etu', $this->request->getPost('etu'))
-         ->get()
-         ->getFirstRow();
+      // Récupérer l'étudiant via le Model
+      $etudiant = $this->etudiantModel->findByEtu($this->request->getPost('etu'));
 
       if (!$etudiant) {
          return redirect()->back()->withInput()->with('error', 'Étudiant introuvable');
       }
 
-      // Insérer la note
-      $db->table('notes')->insert([
-         'id_etudiant' => $etudiant->id,
-         'id_matiers' => $this->request->getPost('id_matiere'),
-         'note' => $this->request->getPost('note'),
-         'total_credit' => 0, // À calculer si nécessaire
-      ]);
+      $matiere = $this->matiereModel->find((int) $this->request->getPost('id_matiere'));
 
-      return redirect()->to('/list')->with('success', 'Note ajoutée avec succès');
+      if (!$matiere) {
+         return redirect()->back()->withInput()->with('error', 'Matière introuvable');
+      }
+
+      if ((int) $matiere['id_periode'] !== (int) $this->request->getPost('id_periode')) {
+         return redirect()->back()->withInput()->with('error', 'La matière ne correspond pas à la période sélectionnée');
+      }
+
+      if ((int) $etudiant['id_option'] !== (int) $this->request->getPost('id_option')) {
+         return redirect()->back()->withInput()->with('error', 'L\'option ne correspond pas à celle de l\'étudiant');
+      }
+
+      // Créer la note via le Model
+      $noteCreated = $this->noteModel->createNote(
+         $etudiant['id'],
+         $this->request->getPost('id_matiere'),
+         $this->request->getPost('note')
+      );
+
+      if ($noteCreated) {
+         return redirect()->to('/list')->with('success', 'Note ajoutée avec succès');
+      } else {
+         return redirect()->back()->withInput()->with('error', 'Erreur lors de l\'ajout de la note');
+      }
    }
 }

@@ -14,4 +14,14 @@ class OptionModel extends Model
     protected $allowedFields = [
         'nom',
     ];
+
+    /**
+     * Récupérer toutes les options
+     * 
+     * @return array
+     */
+    public function getAll()
+    {
+        return $this->orderBy('nom', 'ASC')->findAll();
+    }
 }

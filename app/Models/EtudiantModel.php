@@ -15,6 +15,29 @@ class EtudiantModel extends Model
         'nom',
         'prenoms',
         'etu',
-        'id_periode',
+        'id_option',
     ];
+
+    /**
+     * Trouver un étudiant par ETU
+     * 
+     * @param string $etu
+     * @return array|null
+     */
+    public function findByEtu($etu)
+    {
+        return $this->where('etu', $etu)->first();
+    }
+
+    /**
+     * Récupérer tous les étudiants avec détails
+     * 
+     * @return array
+     */
+    public function getAllWithDetails()
+    {
+        return $this->select('etudiants.*, option.nom as option_nom')
+            ->join('option', 'etudiants.id_option = option.id', 'left')
+            ->findAll();
+    }
 }
