@@ -140,9 +140,9 @@ INSERT INTO notes (id_etudiant, id_matiers, total_credit) VALUES
 INSERT INTO notes (id_etudiant, id_matiers, total_credit) VALUES 
 (1, 7, 9.5),    -- INF207 (Eléments Algorithmique) - 9.5/20
 (1, 8, 12.2),   -- INF210 (Mini-projet développement) - 12.2/20
-(1, 9, 12),     -- INF204 (Système Information géographique) - 12/20
-(1, 17, 11.33), -- MTH203 (MAO) - 11.33/20
-(1, 18, 12.25); -- MTH206 (Optimisation) - 12.25/20
+(1, 17, 12),    -- INF204 (Système Information géographique) - 12/20
+(1, 24, 11.33), -- MTH203 (MAO) - 11.33/20
+(1, 23, 12.25); -- MTH206 (Optimisation) - 12.25/20
 
 -- =============================================
 -- RÉSULTATS - Jean Dupont
