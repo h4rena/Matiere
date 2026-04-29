@@ -16,4 +16,14 @@ class PeriodeModel extends Model
         'id_anne_univ',
         'id_option',
     ];
+
+    /**
+     * Récupérer tous les semestres
+     * 
+     * @return array
+     */
+    public function getAll()
+    {
+        return $this->orderBy('id', 'ASC')->findAll();
+    }
 }

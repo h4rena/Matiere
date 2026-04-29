@@ -2,8 +2,17 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
+
 class Auth extends BaseController
 {
+    protected $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new UserModel();
+    }
+
     public function login(): string
     {
         return view('auth/login');
@@ -14,22 +23,20 @@ class Auth extends BaseController
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
-        // Récupérer l'utilisateur depuis la BD
-        $db = \Config\Database::connect();
-        $user = $db->table('users')
-            ->select('users.id, users.nom, users.email, users.mdp, role.nom as role')
-            ->join('role', 'users.id_role = role.id')
-            ->where('email', $email)
-            ->get()
-            ->getRowArray();
+        if (!$email || !$password) {
+            return redirect()->back()->with('error', 'Email et mot de passe requis');
+        }
 
-        if ($user && md5($password) === $user['mdp']) {
+        // Authentifier l'utilisateur via le Model
+        $user = $this->userModel->authenticate($email, $password);
+
+        if ($user) {
             // Authentification réussie
             session()->set([
                 'user_id' => $user['id'],
                 'user_nom' => $user['nom'],
                 'user_email' => $user['email'],
-                'user_role' => $user['role'],
+                'user_role' => $user['role_nom'],
                 'is_logged' => true
             ]);
             return redirect()->to('/');

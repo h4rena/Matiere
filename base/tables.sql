@@ -59,22 +59,22 @@ CREATE TABLE etudiants (
 CREATE TABLE matieres (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    code VARCHAR(50) NOT NULL,
+    code VARCHAR(50) NOT NULL UNIQUE,
     coefficient DECIMAL(10,2) NOT NULL DEFAULT 1,
     credit INT NOT NULL DEFAULT 0,
     id_parcours INT NOT NULL,
     id_periode INT NOT NULL,
     FOREIGN KEY (id_parcours) REFERENCES parcours(id),
-    FOREIGN KEY (id_periode) REFERENCES periode(id)
+    FOREIGN KEY (id_periode) REFERENCES pirode(id)
 );
 
 CREATE TABLE notes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_etudiant INT NOT NULL,
-    id_matiere INT NOT NULL,
+    id_matiers INT NOT NULL,
     total_credit INT NOT NULL DEFAULT 0,
     FOREIGN KEY (id_etudiant) REFERENCES etudiants(id),
-    FOREIGN KEY (id_matiere) REFERENCES matieres(id)
+    FOREIGN KEY (id_matiers) REFERENCES matieres(id)
 );
 
 CREATE TABLE resultat (

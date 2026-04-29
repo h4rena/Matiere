@@ -126,7 +126,7 @@ INSERT INTO etudiants (nom, prenoms, etu, id_option) VALUES
 -- =============================================
 -- NOTES SEMESTRE 3 - Jean Dupont (option Développement)
 -- =============================================
-INSERT INTO notes (id_etudiant, id_matiers, total_credit) VALUES 
+INSERT INTO notes (id_etudiant, id_matiere, total_credit) VALUES 
 (1, 1, 10.5),   -- INF201 - 10.5/20
 (1, 2, 14),     -- INF202 - 14/20
 (1, 3, 11),     -- INF203 - 11/20
@@ -137,7 +137,7 @@ INSERT INTO notes (id_etudiant, id_matiers, total_credit) VALUES
 -- =============================================
 -- NOTES SEMESTRE 4 - Jean Dupont (option Développement)
 -- =============================================
-INSERT INTO notes (id_etudiant, id_matiers, total_credit) VALUES 
+INSERT INTO notes (id_etudiant, id_matiere, total_credit) VALUES 
 (1, 7, 9.5),    -- INF207 (Eléments Algorithmique) - 9.5/20
 (1, 8, 12.2),   -- INF210 (Mini-projet développement) - 12.2/20
 (1, 17, 12),    -- INF204 (Système Information géographique) - 12/20
