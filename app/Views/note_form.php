@@ -30,11 +30,17 @@
         </a>
 
         <div class="sidebar-bottom">
-            <div class="user-row">
-                <div class="avatar">AD</div>
+            <form action="/auth/logout" method="post" style="margin-bottom: 10px;">
+                <button type="submit" class="btn btn-ghost btn-sm btn-full" style="text-align: left;">
+                    <svg viewBox="0 0 24 24" style="width: 14px; height: 14px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                    Se déconnecter
+                </button>
+            </form>
+            <div class="user-row" style="padding: 8px 0;">
+                <div class="avatar" style="background: linear-gradient(135deg, #06b6d4, #2563eb);"><?= substr(session()->get('user_nom'), 0, 2) ?></div>
                 <div class="user-info">
-                    <div class="name">Admin Sys</div>
-                    <div class="role">Super administrateur</div>
+                    <div class="name"><?= session()->get('user_nom') ?></div>
+                    <div class="role"><?= session()->get('user_role') ?></div>
                 </div>
             </div>
         </div>
@@ -58,7 +64,21 @@
                 <span>Renseigne l'ETU, la matière, le semestre, l'option et la note avant de valider.</span>
             </div>
 
-            <form action="#" method="post" class="form-card">
+            <?php if (session()->getFlashdata('success')): ?>
+                <div class="alert alert-success" style="background: #dcfce7; color: #166534; border-left: 4px solid #22c55e;">
+                    <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span><?= htmlspecialchars(session()->getFlashdata('success'), ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-error" style="background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444;">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    <span><?= htmlspecialchars(session()->getFlashdata('error'), ENT_QUOTES, 'UTF-8') ?></span>
+                </div>
+            <?php endif; ?>
+
+            <form action="/form" method="post" class="form-card">
                 <div class="form-section-title">Saisie de la note</div>
 
                 <div class="form-grid">
@@ -71,25 +91,13 @@
                         <label class="field-label" for="id_matiere">Matière <span class="required">*</span></label>
                         <select id="id_matiere" name="id_matiere" required>
                             <option value="">— Sélectionner —</option>
-                            <option value="INF201">Programmation orientée objet</option>
-                            <option value="INF202">Bases de données objets</option>
-                            <option value="INF203">Programmation système</option>
-                            <option value="INF204">Système d'information géographique</option>
-                            <option value="INF205">Système d'information</option>
-                            <option value="INF206">Interface Homme/Machine</option>
-                            <option value="INF207">Éléments d'algorithmique</option>
-                            <option value="INF208">Réseaux informatiques</option>
-                            <option value="INF209">Web dynamique</option>
-                            <option value="INF210">Mini-projet de développement</option>
-                            <option value="INF211">Mini-projet de bases de données et/ou de réseaux</option>
-                            <option value="INF212">Mini-projet de Web et design</option>
-                            <option value="MTH201">Méthodes numériques</option>
-                            <option value="MTH202">Analyse des données</option>
-                            <option value="MTH203">MAO</option>
-                            <option value="MTH204">Géométrie</option>
-                            <option value="MTH205">Équations différentielles</option>
-                            <option value="MTH206">Optimisation</option>
-                            <option value="ORG201">Bases de gestion</option>
+                            <?php if (!empty($matieres) && is_array($matieres)): ?>
+                                <?php foreach ($matieres as $matiere): ?>
+                                    <option value="<?= htmlspecialchars($matiere['id'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= htmlspecialchars($matiere['nom'], ENT_QUOTES, 'UTF-8') ?> (<?= htmlspecialchars($matiere['code'], ENT_QUOTES, 'UTF-8') ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
 
@@ -97,10 +105,13 @@
                         <label class="field-label" for="id_periode">Semestre <span class="required">*</span></label>
                         <select id="id_periode" name="id_periode" required>
                             <option value="">— Sélectionner —</option>
-                            <option value="1">Semestre 3</option>
-                            <option value="2">Semestre 4 - Développement</option>
-                            <option value="3">Semestre 4 - Réseaux</option>
-                            <option value="4">Semestre 4 - Web</option>
+                            <?php if (!empty($semestres) && is_array($semestres)): ?>
+                                <?php foreach ($semestres as $semestre): ?>
+                                    <option value="<?= htmlspecialchars($semestre['id'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= htmlspecialchars($semestre['nom'], ENT_QUOTES, 'UTF-8') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
 
@@ -108,10 +119,13 @@
                         <label class="field-label" for="id_option">Option <span class="required">*</span></label>
                         <select id="id_option" name="id_option" required>
                             <option value="">— Sélectionner —</option>
-                            <option value="1">sans option</option>
-                            <option value="2">dev</option>
-                            <option value="3">bdd reseau</option>
-                            <option value="4">web</option>
+                            <?php if (!empty($options) && is_array($options)): ?>
+                                <?php foreach ($options as $option): ?>
+                                    <option value="<?= htmlspecialchars($option['id'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= htmlspecialchars($option['nom'], ENT_QUOTES, 'UTF-8') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
                     </div>
 
