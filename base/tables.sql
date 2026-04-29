@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS etudiants;
-USE etudiants;
+CREATE DATABASE IF NOT EXISTS matiere_db;
+USE matiere_db;
 
 CREATE TABLE responsable (
     id INT AUTO_INCREMENT PRIMARY KEY,
