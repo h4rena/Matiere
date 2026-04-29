@@ -51,7 +51,9 @@ CREATE TABLE etudiants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     prenoms VARCHAR(150) NOT NULL,
-    etu VARCHAR(50) NOT NULL UNIQUE
+    etu VARCHAR(50) NOT NULL UNIQUE,
+    id_periode INT NOT NULL,
+    FOREIGN KEY (id_periode) REFERENCES periode(id)
 );
 
 CREATE TABLE matieres (
