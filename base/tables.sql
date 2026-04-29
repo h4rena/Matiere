@@ -38,7 +38,7 @@ CREATE TABLE anne_univ (
     nom VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE pirode (
+CREATE TABLE periode (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     id_anne_univ INT NOT NULL,
