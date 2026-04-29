@@ -10,4 +10,9 @@ class EtudiantController extends BaseController
     return view('etudiants',['lists'=>$list]);
    }
 
+   public function form(): string
+   {
+      return view('note_form');
+   }
+
 }
